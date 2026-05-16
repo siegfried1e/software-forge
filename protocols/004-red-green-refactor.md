@@ -6,7 +6,7 @@ Active
 
 ## Purpose
 
-Define the strict TDD cycle for all implementation work. No code is written without a failing test first. No refactoring without green tests. Every cycle produces a commit.
+Define the strict TDD cycle for all implementation work. The Developer writes test code from test specifications (Protocol 002), then implements code to make each test pass. No code is written without a failing test first. No refactoring without green tests. Every cycle produces a commit.
 
 ## Position in the Pipeline
 
@@ -16,14 +16,14 @@ SOW → Journey → Use Cases → Business Rules → Test Cases → Solution Dra
                                                                             (this protocol)
 ```
 
-This protocol governs Stage 7 of Protocol 001. It takes the red tests from Stage 5 (Protocol 002) and the architecture from Stage 6 (Protocol 003) and produces working code through disciplined TDD cycles.
+This protocol governs Stage 7 of Protocol 001. It takes the test specifications from Stage 5 (Protocol 002) and the architecture from Stage 6 (Protocol 003) and produces test code and working implementation through disciplined TDD cycles.
 
 ## The Cycle
 
 ```
    ┌──────────┐
-   │   RED    │  Write or select a failing test
-   │          │  (test exists from Stage 5, or write new one for discovered requirements)
+   │   RED    │  Write a test from the test specification
+   │          │  (translate a scenario from Stage 5 into test code, confirm it fails)
    └────┬─────┘
         │
         ▼
@@ -47,7 +47,7 @@ This protocol governs Stage 7 of Protocol 001. It takes the red tests from Stage
 
 You MUST NOT write implementation code without a failing test that demands it. If you discover a need for code that no test covers, write the test first.
 
-The test suite from Stage 5 (Protocol 002) provides the initial red tests. As implementation progresses, you will discover additional tests needed — write them red, then make them green.
+The test specifications from Stage 5 (Protocol 002) define what to test. The Developer translates each scenario into test code (red), then writes the minimum implementation to make it pass (green). As implementation progresses, you will discover additional tests needed — write them red, then make them green.
 
 ### 2. Minimum to Green
 
@@ -87,7 +87,7 @@ Each color change produces a commit:
 | GREEN | `feat(BR-NNN): implement <what>` | `feat(BR-001): implement password length validation` |
 | REFACTOR | `refactor(BR-NNN): <what changed>` | `refactor(BR-001): extract validator to shared function` |
 
-Stage 5 tests are already committed red. Implementation starts at GREEN.
+Each cycle starts at RED — the Developer writes the test from the test specification, commits it failing, then proceeds to GREEN.
 
 ### 6. Work Order: By BR, Bottom-Up
 
@@ -123,14 +123,14 @@ After all BR unit tests are green, write integration tests that verify cross-BR 
 
 ## Inputs
 
-- Failing test suite from Stage 5 (`test/business-rules/BR-PROJ-NNN_*_test.<ext>`)
+- Test specifications from Stage 5 (`docs/test-specifications/BR-PROJ-NNN_*_test-spec.md`)
 - Solution architecture from Stage 6 (`docs/solution/*.md`)
 - Business rules (`docs/business-rules/BR-PROJ-NNN_*.md`)
 - Use cases (`docs/use-cases/UC-PROJ-NNN_*.md`)
 
 ## Gate
 
-All tests pass (green). Implementation matches:
+All tests pass (green). Every test traces back to a test specification scenario. Implementation matches:
 - Solution draft interfaces
 - Verification steps in use cases
 - Traceability matrix — every BR has an enforcing component with passing tests

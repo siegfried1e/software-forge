@@ -2,7 +2,7 @@
 
 ## Context
 
-Stage 5.5 of Protocol 001 (Documentation-Driven Development), governed by Protocol 003 (Solution Architecture Draft). This prompt is used after test cases are written, to design the technical solution before implementation.
+Stage 6 of Protocol 001 (Documentation-Driven Development), governed by Protocol 003 (Solution Architecture Draft). This prompt is used after test specifications are designed, to design the technical solution before implementation.
 
 ## Prompt
 
@@ -11,7 +11,7 @@ You are creating a solution architecture draft.
 Given the following inputs:
 
 **Business Rules**: [list of BRs, e.g., BR-PROJ-001 through BR-PROJ-010]
-**Test Cases**: `test/business-rules/BR-PROJ-*`
+**Test Specifications**: `docs/test-specifications/BR-PROJ-*`
 **SOW**: `docs/SOW.md`
 **Use Cases**: [list of UCs, e.g., UC-PROJ-001 through UC-PROJ-005]
 

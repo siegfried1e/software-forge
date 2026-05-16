@@ -6,79 +6,91 @@ Active
 
 ## Purpose
 
-Define the standard for generating test cases from business rules. Every business rule MUST have a comprehensive test suite covering all valid examples, invalid examples, and edge cases — written before any implementation code. This is the bridge between documentation (Protocol 001 Stage 4) and implementation (Protocol 001 Stage 5).
+Define the standard for designing test specifications from business rules. Every business rule MUST have a comprehensive test specification covering all valid examples, invalid examples, and edge cases — designed before any code is written. Test specifications are design documents that define what to test, not how. This is the bridge between documentation (Protocol 001 Stage 4) and implementation (Protocol 001 Stage 7).
 
 ## Position in the Pipeline
 
 ```
-SOW → Journey → Use Cases → Business Rules → Test Cases → Implementation
-                                                  ↑
-                                            (this protocol)
+SOW → Journey → Use Cases → Business Rules → Test Specifications → Solution Draft → Implementation
+                                                      ↑
+                                                (this protocol)
 ```
 
-This protocol adds Stage 4.5 between Business Rules and Implementation. Tests are written first (TDD). Implementation follows to make the tests pass.
+This protocol governs Stage 5 of Protocol 001. Test specifications are designed first. Implementation (Stage 7) writes the test code and makes it pass.
 
 ## Rules
 
-### 1. Every BR Gets a Test File
+### 1. Every BR Gets a Test Specification
 
-Each business rule `BR-PROJ-NNN` MUST have a corresponding test file:
+Each business rule `BR-PROJ-NNN` MUST have a corresponding test specification file:
 ```
-test/business-rules/BR-PROJ-NNN_<ShortName>_test.<ext>
+docs/test-specifications/BR-PROJ-NNN_<ShortName>_test-spec.md
 ```
 
-### 2. Minimum Test Coverage Per BR
+### 2. Minimum Scenario Coverage Per BR
 
 Every BR MUST have at least:
-- **One success test per valid example** — confirms the system allows what it should
-- **One failure test per invalid example** — confirms the system rejects what it should, with the correct error message
-- **One edge case test** — covers boundary conditions not explicitly listed in valid/invalid examples
+- **One success scenario per valid example** — describes what the system should accept and the expected result
+- **One failure scenario per invalid example** — describes what the system should reject and the exact error message
+- **One edge case scenario** — covers boundary conditions not explicitly listed in valid/invalid examples
 
 ### 3. Error Messages Are Part of the Contract
 
-Tests MUST assert the exact error message text, including the BR identifier. Error messages are not implementation details — they are user-facing contracts defined in the BR.
+Test specifications MUST include the exact error message text, including the BR identifier. Error messages are not implementation details — they are user-facing contracts defined in the BR.
 
-Example:
+Example scenario:
 ```
-assert error contains "BR-PROJ-001"
-assert error contains "Password must be at least 8 characters"
-```
-
-### 4. Test Structure
-
-Every test file follows this structure:
-
-```
-// TestBR_PROJ_NNN_<ShortName>_Success_<Scenario>
-// TestBR_PROJ_NNN_<ShortName>_Failure_<Scenario>
-// TestBR_PROJ_NNN_<ShortName>_Edge_<Scenario>
+Scenario: Password too short
+Category: Failure
+Input: password = "abc"
+Expected Error: "Password must be at least 8 characters (BR-PROJ-001)"
+BR Reference: BR-PROJ-001
 ```
 
-Use table-driven tests when multiple inputs map to the same assertion pattern.
+### 4. Specification Structure
 
-### 5. Tests Are Red First
+Every test specification file follows this structure:
 
-Tests MUST be written and committed in a failing state (red). They are the specification. Implementation makes them green. This sequence is enforced:
+```markdown
+# Test Specification — BR-PROJ-NNN: <Title>
 
-1. Write test file — commit (tests fail, this is expected)
-2. Write implementation — commit (tests pass)
-3. Refactor — commit (tests still pass)
+## BR Reference
+BR-PROJ-NNN
 
-### 6. Test Categories
+## Coverage Summary
+- Success scenarios: <count>
+- Failure scenarios: <count>
+- Edge case scenarios: <count>
+- Out of scope: <list from BR's "Does not cover">
 
-Each BR test suite covers three categories:
+## Scenarios
 
-| Category | Purpose | Naming |
-|----------|---------|--------|
-| **Success** | Valid inputs produce expected results | `Test..._Success_<Scenario>` |
-| **Failure** | Invalid inputs produce correct error with BR identifier | `Test..._Failure_<Scenario>` |
-| **Edge** | Boundary conditions, empty inputs, concurrent access, nil refs | `Test..._Edge_<Scenario>` |
+### S-001: <Scenario Name>
 
-### 7. What to Test Per BR Type
+**Category**: Success | Failure | Edge
+**Input**: <concrete input values>
+**Expected Outcome**: <expected result for success, expected error for failure>
+**BR Reference**: BR-PROJ-NNN
+**Notes**: <optional — any context the Developer needs when writing the test>
+```
 
-| BR Type | Test Focus |
-|---------|-----------|
-| **Validation** | Input accepted/rejected with correct error messages |
+### 5. Scenario Naming
+
+Each scenario follows the naming convention: `S-NNN: BR_PROJ_NNN_ShortName_{Success|Failure|Edge}_Scenario`. This name maps directly to the test function name the Developer will write in Stage 7.
+
+### 6. Scenario Categories
+
+| Category | Purpose | Required Content |
+|----------|---------|-----------------|
+| **Success** | Valid inputs produce expected results | Concrete input, expected result |
+| **Failure** | Invalid inputs produce correct error with BR identifier | Concrete input, exact error message including BR identifier |
+| **Edge** | Boundary conditions, empty inputs, concurrent access, nil refs | Concrete input, expected behavior at the boundary |
+
+### 7. What to Specify Per BR Type
+
+| BR Type | Specification Focus |
+|---------|-------------------|
+| **Validation** | Input accepted/rejected with expected error messages |
 | **Communication** | Messages flow correctly through expected channels |
 | **Configuration** | Default values applied correctly, overrides work |
 | **Ordering** | Phase gates block premature progression, resume works |
@@ -87,4 +99,4 @@ Each BR test suite covers three categories:
 
 ## Gate
 
-All test files committed and failing (red). The test suite is the specification. No implementation code exists yet. Running the test suite shows all tests failing with clear assertion messages.
+All test specification files exist in `docs/test-specifications/`. Every BR has a specification. Every specification has at least one success, one failure, and one edge case scenario. Every scenario has concrete input, expected outcome, and BR reference. No code has been written — specifications are design documents only.

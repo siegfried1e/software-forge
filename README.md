@@ -22,10 +22,14 @@ Protocols define **how** to do each thing:
 
 | # | Protocol | Governs |
 |---|----------|---------|
-| 001 | [Documentation-Driven Development](protocols/001-documentation-driven-development.md) | The full pipeline — stages 1 through 7 |
+| 001 | [Documentation-Driven Development](protocols/001-documentation-driven-development.md) | The full pipeline — stages 1 through 7; Architectural Decision Records (ADRs) |
 | 002 | [Test-Driven Business Rules](protocols/002-test-driven-business-rules.md) | Stage 5 — writing test cases from BRs |
 | 003 | [Solution Architecture](protocols/003-solution-architecture.md) | Stage 6 — designing the technical solution |
 | 004 | [Red-Green-Refactor](protocols/004-red-green-refactor.md) | Stage 7 — implementing with strict TDD |
+| 005 | [Cross-Project Integration](protocols/005-cross-project-integration.md) | Multi-project boundaries — contracts between systems |
+| 006 | [Phased Multi-Component Delivery](protocols/006-phased-multi-component-delivery.md) | Multi-component systems — master SOW, build order, vertical slices |
+| 007 | [Multi-Agent Pipeline Execution](protocols/007-multi-agent-pipeline-execution.md) | Multi-agent decomposition — agent roles, orchestration, context handoff, workspace isolation, developer agent prohibitions, orchestrator prohibitions, agent behavior on undocumented architecture |
+| 008 | [Agent Communication Contract](protocols/008-agent-communication-contract.md) | Dispatch, completion, and gate feedback artifacts between Orchestrator and agents |
 
 ## Prompts
 
@@ -37,9 +41,30 @@ Prompts are **executable instructions** — give them to an AI assistant or foll
 | 002 | [Create User Journey](prompts/002-create-user-journey.md) | Stage 2 |
 | 003 | [Create Use Cases](prompts/003-create-use-cases.md) | Stage 3 |
 | 004 | [Create Business Rules](prompts/004-create-business-rules.md) | Stage 4 |
-| 005 | [Create BR Test Cases](prompts/005-create-br-test-cases.md) | Stage 5 |
+| 005 | [Create BR Test Specifications](prompts/005-create-br-test-cases.md) | Stage 5 |
 | 006 | [Create Solution Draft](prompts/006-create-solution-draft.md) | Stage 6 |
 | 007 | [Implement (Red-Green-Refactor)](prompts/007-implement-red-green-refactor.md) | Stage 7 |
+| 008 | [Define Agent Communication Contract](prompts/008-define-agent-communication-contract.md) | Protocol 008 |
+| 009 | [Clarify Agent Identity vs Instance](prompts/009-clarify-agent-identity-vs-instance.md) | Protocol 007 |
+| 010 | [Orchestrate Pipeline](prompts/010-orchestrate-pipeline.md) | Orchestrator — triage, routing, propagation |
+| 011 | [Recurring Discrepancy Rule](prompts/011-recurring-discrepancy-rule.md) | Protocol 007 — recurring discrepancies in triage |
+| 012 | [Parallel Workspace Isolation](prompts/012-parallel-workspace-isolation.md) | Protocol 007 — workspace isolation for parallel agents |
+| 013 | [Developer Agent Prohibitions](prompts/013-developer-agent-prohibitions.md) | Protocol 007 — behavioral constraints for Stage 7 developer agents |
+| 014 | [Dispatch Deliverable Grouping](prompts/014-dispatch-deliverable-grouping.md) | Protocol 008 — deliverable grouping for high-count dispatches |
+| 015 | [Orchestrator Prohibitions](prompts/015-orchestrator-prohibitions.md) | Protocol 007 — orchestrator write-scope prohibitions |
+| 016 | [Retroactive Formalization](prompts/016-retroactive-formalization.md) | Protocol 006 — formalization debt tracking and resolution |
+| 017 | [Dispatch Context Reset](prompts/017-dispatch-context-reset.md) | Protocol 008 — context reset field for fresh agent sessions |
+| 018 | [Self-Contained Dispatch](prompts/018-self-contained-dispatch.md) | Protocol 008 — self-containment requirement for reset dispatches |
+| 019 | [Architectural Documentation](prompts/019-architectural-documentation.md) | ADR requirement (Protocol 001) and agent behavior on undocumented architecture (Protocol 007) |
+
+## Templates
+
+Reusable configuration files for projects adopting this methodology:
+
+| Template | Purpose |
+|----------|---------|
+| [Developer Agent CLAUDE.md](templates/developer-claude-md.md) | CLAUDE.md template for Stage 7 developer agents — enforces behavioral prohibitions (no writes to coordination directory, no branch merging, no self-issued gate verdicts) |
+| [Architectural Decision Record](templates/decision-record.md) | Canonical ADR template — use for documenting architectural decisions before encoding them in code, charts, BRs, or solution docs |
 
 ## How to Use
 

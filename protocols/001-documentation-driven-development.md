@@ -82,20 +82,20 @@ After creating rules, back-reference them in the use cases that triggered them.
 
 **Gate**: Every use case references at least one business rule. Every business rule is referenced by at least one use case. Cross-references are bidirectional.
 
-### Stage 5: Test Cases (TDD)
+### Stage 5: Test Specifications
 
 **Input**: Business rules.
 
-**Action**: For each BR, generate a test file in `test/business-rules/` covering:
-- One success test per valid example
-- One failure test per invalid example (asserting exact error message + BR identifier)
-- At least one edge case test per BR
+**Action**: For each BR, design a test specification in `docs/test-specifications/` covering:
+- One success scenario per valid example
+- One failure scenario per invalid example (with exact error message + BR identifier)
+- At least one edge case scenario per BR
 
-Tests are committed in a failing state (red). They are the specification. See Protocol 002 for full rules.
+Test specifications are design documents, not code. They define what to test, not how. See Protocol 002 for full rules.
 
-**Output**: Test files at `test/business-rules/BR-PROJ-NNN_<ShortName>_test.<ext>`.
+**Output**: Specification files at `docs/test-specifications/BR-PROJ-NNN_<ShortName>_test-spec.md`.
 
-**Gate**: All tests compile. All tests fail (red). Every BR has at least one success, one failure, and one edge case test.
+**Gate**: Every BR has a test specification. Every specification has at least one success, one failure, and one edge case scenario. Every scenario has defined input, expected outcome, and BR reference.
 
 ### Stage 6: Solution Architecture Draft
 
@@ -109,20 +109,47 @@ Tests are committed in a failing state (red). They are the specification. See Pr
 
 ### Stage 7: Implementation (Red-Green-Refactor)
 
-**Input**: Solution draft + test cases + use cases + business rules.
+**Input**: Solution draft + test specifications + use cases + business rules.
 
-**Action**: Implement code using strict Red-Green-Refactor TDD cycles (Protocol 004):
-1. **RED** — Pick a failing test, confirm it fails
+**Action**: For each BR in dependency order, implement code using strict Red-Green-Refactor TDD cycles (Protocol 004):
+1. **RED** — Read the test specification, write a test, confirm it fails
 2. **GREEN** — Write the minimum code to make it pass
 3. **REFACTOR** — Clean up while keeping all tests green
 4. **Commit** — One commit per color change
-5. **Repeat** — Next failing test
+5. **Repeat** — Next test in the specification, then next BR
 
 Work through BRs in dependency order (foundational validation first, integration last). One test at a time. No code without a failing test. No refactoring while red.
 
-**Output**: Working code in the packages defined by the solution draft.
+**Output**: Test code and working implementation in the packages defined by the solution draft.
 
-**Gate**: All tests pass (green). Implementation matches the solution draft interfaces and the verification steps in the use cases. Every commit follows the RED-GREEN-REFACTOR pattern.
+**Gate**: All tests pass (green). Every test traces back to a test specification. Implementation matches the solution draft interfaces and the verification steps in the use cases. Every commit follows the RED-GREEN-REFACTOR pattern.
+
+## Architectural Decision Records
+
+Any decision that shapes the project's architecture beyond what is captured by an SOW or a business rule MUST be recorded in an Architectural Decision Record (ADR) before it is encoded in code, charts, BRs, or solution docs.
+
+### What Requires an ADR
+
+- Component-level placement choices (which namespace, which directory, which module)
+- Cross-component ownership decisions (which agent or chart owns a given resource)
+- Technology selection or substitution (language, framework, library, infrastructure)
+- Deployment topology (single vs. multiple replicas, queue group vs. single consumer, etc.)
+- Pattern adoption not from a BR (e.g., "we use control-plane/data-plane namespace split")
+- Cross-cutting conventions (naming schemes, error formats, log structure)
+
+### Location
+
+ADRs MAY live in `docs/coordination/decision-log.md` (project-side) or in a dedicated `docs/architecture/` directory. The location is project-specific; the requirement that the decision be recorded is universal. A canonical ADR template is provided in `templates/decision-record.md`.
+
+### Timing
+
+ADRs MUST be written BEFORE the decision is encoded in code, charts, BRs, or solution docs. When a decision was already applied without documentation, it MUST be recorded retroactively before the next phase's Stage 7 begins. The retroactive path (backfill dispatch or bundle into next phase) is defined by the Retroactive Formalization rule — see Protocol 006, Rule 9, and Prompt 016.
+
+### ADRs and the Pipeline
+
+An architectural decision that constrains a BR MUST be referenced in that BR's normative statement. A decision that constrains the solution MUST be referenced in the solution doc's component definitions. The Orchestrator MAY dispatch the Solution Architect or Specifier to write an ADR if a decision surfaces during Stage 6 or Stage 4.
+
+Agents encountering architectural choices that cannot be traced to an authoritative document MUST stop and flag the gap rather than infer or invent a rationale. See Protocol 007 (Agent Behavior on Undocumented Architecture).
 
 ## Rules
 
@@ -142,7 +169,7 @@ Each stage has a corresponding prompt in `prompts/` that can be used to execute 
 | 2. Journey | `prompts/002-create-user-journey.md` | Create a user journey from the SOW |
 | 3. Use Cases | `prompts/003-create-use-cases.md` | Formalize journey steps into use cases |
 | 4. Business Rules | `prompts/004-create-business-rules.md` | Extract rules from use cases and cross-reference |
-| 5. Test Cases | `prompts/005-create-br-test-cases.md` | Generate TDD test suite from business rules |
+| 5. Test Specifications | `prompts/005-create-br-test-cases.md` | Design test specifications from business rules |
 | 6. Solution Draft | `prompts/006-create-solution-draft.md` | Design technical solution with interfaces and traceability |
 | 7. Implementation | `prompts/007-implement-red-green-refactor.md` | Implement code via strict Red-Green-Refactor TDD cycles (Protocol 004) |
 

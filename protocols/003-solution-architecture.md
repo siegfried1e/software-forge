@@ -6,17 +6,17 @@ Active
 
 ## Purpose
 
-Define the standard for elaborating a solution architecture from business rules and test cases. The solution draft bridges the gap between "what must be true" (BRs + tests) and "how we build it" (code). It captures technology choices, component design, interfaces, and data flow before implementation begins.
+Define the standard for elaborating a solution architecture from business rules and test specifications. The solution draft bridges the gap between "what must be true" (BRs + test specifications) and "how we build it" (code). It captures technology choices, component design, interfaces, and data flow before implementation begins.
 
 ## Position in the Pipeline
 
 ```
-SOW → Journey → Use Cases → Business Rules → Test Cases → Solution Draft → Implementation
+SOW → Journey → Use Cases → Business Rules → Test Specifications → Solution Draft → Implementation
                                                                ↑
                                                          (this protocol)
 ```
 
-This protocol adds Stage 5.5 between Test Cases and Implementation.
+This protocol governs Stage 6, between Test Specifications and Implementation.
 
 ## Rules
 
@@ -30,7 +30,7 @@ Every solution draft MUST include:
 - **Data flow** — how a request moves through the system end-to-end
 - **Error handling** — how each component handles each failure class
 - **Build & deploy** — build targets, container images, deployment manifests
-- **Traceability matrix** — which BRs and test cases each component satisfies
+- **Traceability matrix** — which BRs and test specification scenarios each component satisfies
 
 ### 2. One Component Per File
 
@@ -70,4 +70,4 @@ When integrating with an existing system, clearly delineate what is new vs. what
 
 ## Gate
 
-Solution draft reviewed and accepted. All components have defined interfaces. Traceability matrix covers all BRs and test cases. Ready to implement.
+Solution draft reviewed and accepted. All components have defined interfaces. Traceability matrix covers all BRs and test specification scenarios. Ready to implement.
