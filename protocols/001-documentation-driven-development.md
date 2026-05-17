@@ -105,7 +105,7 @@ Test specifications are design documents, not code. They define what to test, no
 
 **Output**: Files in `docs/solution/`.
 
-**Gate**: All components have defined interfaces. All BRs mapped to components. Solution reviewed and accepted.
+**Gate**: All components have defined interfaces. All BRs mapped to components. Solution document includes a "Cross-Component Service References" section per Protocol 003, Rule 7, with entries for every cross-release/cross-namespace Service the designed component consumes. Solution reviewed and accepted.
 
 ### Stage 7: Implementation (Red-Green-Refactor)
 

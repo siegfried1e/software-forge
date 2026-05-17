@@ -23,8 +23,8 @@ Protocols define **how** to do each thing:
 | # | Protocol | Governs |
 |---|----------|---------|
 | 001 | [Documentation-Driven Development](protocols/001-documentation-driven-development.md) | The full pipeline — stages 1 through 7; Architectural Decision Records (ADRs) |
-| 002 | [Test-Driven Business Rules](protocols/002-test-driven-business-rules.md) | Stage 5 — writing test cases from BRs |
-| 003 | [Solution Architecture](protocols/003-solution-architecture.md) | Stage 6 — designing the technical solution |
+| 002 | [Test-Driven Business Rules](protocols/002-test-driven-business-rules.md) | Stage 5 — writing test cases from BRs; runtime behavior coverage check (E2E scenarios) |
+| 003 | [Solution Architecture](protocols/003-solution-architecture.md) | Stage 6 — designing the technical solution; cross-component service references |
 | 004 | [Red-Green-Refactor](protocols/004-red-green-refactor.md) | Stage 7 — implementing with strict TDD |
 | 005 | [Cross-Project Integration](protocols/005-cross-project-integration.md) | Multi-project boundaries — contracts between systems |
 | 006 | [Phased Multi-Component Delivery](protocols/006-phased-multi-component-delivery.md) | Multi-component systems — master SOW, build order, vertical slices |
@@ -56,6 +56,8 @@ Prompts are **executable instructions** — give them to an AI assistant or foll
 | 017 | [Dispatch Context Reset](prompts/017-dispatch-context-reset.md) | Protocol 008 — context reset field for fresh agent sessions |
 | 018 | [Self-Contained Dispatch](prompts/018-self-contained-dispatch.md) | Protocol 008 — self-containment requirement for reset dispatches |
 | 019 | [Architectural Documentation](prompts/019-architectural-documentation.md) | ADR requirement (Protocol 001) and agent behavior on undocumented architecture (Protocol 007) |
+| 020 | [Stage 6 Gate — Cross-Component Service References](prompts/020-stage6-gate-cross-component-services.md) | Protocol 003 — mandatory enumeration of external services consumed across release/namespace boundaries |
+| 021 | [Stage 5 Gate — Runtime E2E Tests](prompts/021-stage5-gate-runtime-e2e-tests.md) | Protocol 002 — runtime behavior coverage check (E2E scenarios required for runtime BRs) |
 
 ## Templates
 
@@ -65,6 +67,7 @@ Reusable configuration files for projects adopting this methodology:
 |----------|---------|
 | [Developer Agent CLAUDE.md](templates/developer-claude-md.md) | CLAUDE.md template for Stage 7 developer agents — enforces behavioral prohibitions (no writes to coordination directory, no branch merging, no self-issued gate verdicts) |
 | [Architectural Decision Record](templates/decision-record.md) | Canonical ADR template — use for documenting architectural decisions before encoding them in code, charts, BRs, or solution docs |
+| [Test Specification with E2E Scenario](templates/test-spec-with-e2e.md) | Test specification template including the canonical end-to-end scenario shape for BRs that specify runtime behavior (Protocol 002, Rule 8) |
 
 ## How to Use
 

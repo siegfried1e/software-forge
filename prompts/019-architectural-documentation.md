@@ -1,16 +1,19 @@
 # Prompt 019 — Architectural Decisions MUST Be Documented; Agents Question, Never Invent
 
+> **Source**: drafted by Mila Orchestrator (`/home/themaster/workspace/agentic`) on 2026-05-16 after the trigger described below.
+> **To submit**: copy this file to `/home/themaster/workspace/evocatio/software-forge/prompts/019-architectural-documentation.md`, review/refine, and integrate into the relevant protocol(s).
+
 ## Context
 
-While a project was closing a phase introducing inter-component messaging, the user asked the Orchestrator a simple question: "why are there two namespaces, `app` and `app-system`?". The Orchestrator answered with a plausible-sounding rationale — control plane vs data plane, multi-tenant readiness, Kubernetes convention. The answer was internally consistent and matched how similar platforms (cert-manager, ArgoCD, Istio) organize themselves.
+While Mila was closing Phase 6 (Agent Messaging via NATS), the user asked the Orchestrator a simple question: "why are there two namespaces, `mila` and `mila-system`?". The Orchestrator answered with a plausible-sounding rationale — control plane vs data plane, multi-tenant readiness, Kubernetes convention. The answer was internally consistent and matched how similar platforms (cert-manager, ArgoCD, Istio) organize themselves.
 
-**But the rationale was nowhere documented.** No decision-log entry, no SOW section, no BR. The pattern was load-bearing — referenced by every chart's `.Release.Namespace`, by a BR mandating a Secret in `app`, by the operator's RBAC scope, by every deployment in the phase. Yet the *why* was never recorded. The Orchestrator was **inferring** the rationale post-hoc and presenting it as known design intent.
+**But the rationale was nowhere documented.** No decision-log entry, no SOW section, no BR. The pattern was load-bearing — referenced by every chart's `.Release.Namespace`, by BR-MILA-144 (Secret in `mila`), by the operator's RBAC scope, by NATS DNS, by every Phase 6 deployment. Yet the *why* was never recorded. The Orchestrator was **inferring** the rationale post-hoc and presenting it as known design intent.
 
 This is a methodology failure mode. When architectural decisions are implicit:
 
 1. **Downstream agents inherit the gap.** Specifier writing BRs against the implicit pattern, Test Architect writing scenarios, Solution Architect designing flows — each has to *infer* the constraint from observed code/charts. Inference is not knowledge.
 2. **Inferred rationales drift.** A decision documented once stays consistent across decades. A decision inferred separately by ten agents produces ten slightly-different rationales, and the ones that propagate downstream may not match the original intent.
-3. **Friction surfaces as bugs.** A BR says a credentials Secret MUST be in the `app` namespace, but a later chart templates it in `.Release.Namespace` (= `app-system`). The BR was written assuming namespace placement that the chart's design contradicts. Neither side documented the namespace decision, so neither side caught the contradiction until integration testing surfaced it as a discrepancy.
+3. **Friction surfaces as bugs.** Mila's BR-MILA-144 says the `mila-nats-creds` Secret MUST be in the `mila` namespace, but the post-Phase-6 `mila-agent-worker` chart templates it in `.Release.Namespace` (= `mila-system`). The BR was written assuming namespace placement that the chart's design contradicts. Neither side documented the namespace decision, so neither side caught the contradiction until integration testing surfaced it as a discrepancy.
 
 The user's response when the Orchestrator described this issue:
 
@@ -80,8 +83,8 @@ Update the protocols and prompts tables in `software-forge/README.md` to referen
 
 ## Triggering Incident (for evidence in the prompt's context section)
 
-- **Context**: end-of-phase closure for a deployment introducing a control-plane / data-plane namespace split.
-- **Decision**: an `app` (data plane) vs `app-system` (control plane) namespace split.
-- **Implicit since**: at latest the first phase that deployed the operator into `app-system`. Probably earlier.
-- **Documented in**: nothing, until a retroactive decision-log entry was added at end-of-phase.
-- **Friction observed**: a BR said the Secret belongs in `app`, but a later chart templated it in `app-system`. The mismatch surfaced during an integration gate; documented as a "potential formalization debt" but never blocked the gate. Without this rule, the gap could have persisted indefinitely.
+- **Date**: 2026-05-16, end of Mila Phase 6 closure (after D-091 PASS).
+- **Decision**: Mila's `mila` (data plane) vs `mila-system` (control plane) namespace split.
+- **Implicit since**: at latest Phase 1 / Phase 2 (operator deployed in `mila-system`). Probably earlier.
+- **Documented in**: nothing, until Mila decision-log #017 (this prompt's project-side counterpart) was added retroactively on 2026-05-16.
+- **Friction observed**: BR-MILA-144 says Secret in `mila`, post-D-088 chart templates in `mila-system`. The mismatch surfaced during D-089 integration gate; documented as a "potential FD" but never blocked the gate. Without this rule, the gap could have persisted indefinitely.
