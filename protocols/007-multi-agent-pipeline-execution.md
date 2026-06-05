@@ -159,6 +159,24 @@ When ANY agent — Orchestrator, Analyst, Specifier, Test Architect, Solution Ar
 
 **Why this matters.** When architectural decisions are implicit, each agent infers the rationale independently. Inferred rationales drift: ten agents produce ten slightly different versions, and the one that propagates downstream may not match the original intent. Mismatch accumulates until integration testing surfaces it as a discrepancy (e.g., a BR specifying resource placement that contradicts the chart's design). A single documented decision stays consistent indefinitely. See Protocol 001 (Architectural Decision Records) for the ADR requirement.
 
+### Stage 7 Pre-Flight: Architectural-Pivot Checkpoint
+
+Before authoring any Stage 7 Developer dispatch, the Orchestrator MUST run the five-question Pre-Flight Architectural-Pivot Checkpoint defined in Protocol 001, Stage 7. If any question fires a "Yes" without upstream coverage, the Orchestrator MUST redirect to the appropriate upstream stage before dispatching Stage 7.
+
+**Halt conditions** (any "Yes" without upstream citation → do not dispatch Stage 7):
+
+| Question | Fires when | Required upstream work |
+|----------|-----------|----------------------|
+| 1. New K8s / platform resource kind | Dispatch creates a resource kind absent from the current deployment surface | Stage 4 BR amendment + Stage 6 Solution + ADR |
+| 2. Storage / state substrate change | Dispatch changes how an existing data flow persists or transports data | ADR + BR amendment + Solution amendment |
+| 3. New contract surface | Dispatch introduces a new inter-process contract (route, subject, RPC, topic, webhook) | Contract Registry entry — Solution Architect dispatch |
+| 4. New RBAC binding or cross-namespace access | Dispatch expands the principal-to-resource access matrix | Cross-Component Service References update (Protocol 003, Rule 7) + Solution Architect dispatch |
+| 5. Authorization-citation mismatch | Dispatch cites an ADR, BR, or Solution doc whose verbatim text does not authorize the design | Resolve contradiction upstream (amendment or redesign) before Stage 7 |
+
+The Orchestrator records the checkpoint evaluation in the audit-log gate verdict for every dispatch — including clean passes where all answers are "No". The negative confirmation is the evidence that the check was run.
+
+When scope expansion is detected after Stage 7 merge rather than at pre-flight, the Orchestrator dispatches retroactive stages in standard sequence (Analyst → Specifier → Test Architect → Solution Architect → Developer revalidation) and tracks them as a remediation chain in the audit-log. No merged code is rolled back; the documentation pipeline catches up to the deployed state.
+
 ### Stage 7 Parallelization
 
 The Orchestrator MAY spawn multiple Developer agents to work on independent business rules concurrently. Two BRs are independent when neither's implementation imports or calls the other's enforcing component (as defined in the traceability matrix). The Orchestrator determines independence by reading `docs/solution/traceability.md` and the dependency order from Protocol 004, Rule 6.
@@ -527,6 +545,8 @@ Changes always propagate forward through the pipeline, never backward. If a down
 9. **No agent skips a stage.** Even in multi-agent execution, the pipeline sequence defined in Protocol 001 is inviolable. Agents execute their assigned stages in order.
 
 10. **Orchestrator maintains coordination records.** The Orchestrator MUST maintain all coordination records in `docs/coordination/`: the audit log, the decision log, gate verdicts with detailed rationale, context package manifests, and change propagation records. These are the only documents the Orchestrator authors — they are coordination records, not pipeline artifacts (see Pipeline Artifacts vs. Coordination Records).
+
+11. **"Tactical fix" framing is not a pipeline shortcut.** When a Stage 7 dispatch's acceptance criteria expand the project's architectural surface area (any "Yes" to questions 1-4 of the Stage 7 Pre-Flight Architectural-Pivot Checkpoint in Protocol 001), the dispatch ceases to be tactical and MUST follow the full Stage 1-6 pipeline before Stage 7 ships — regardless of how the dispatch was initially titled, scoped, or framed. The Orchestrator records the scope-expansion detection in the audit-log gate verdict. Subsequent retroactive Stage 1-6 dispatches (if the scope expansion is detected after Stage 7 merge rather than at pre-flight) are dispatched in standard sequence (Analyst → Specifier → Test Architect → Solution Architect → Developer revalidation) and tracked as a remediation chain in the audit-log.
 
 ## Anti-Patterns
 

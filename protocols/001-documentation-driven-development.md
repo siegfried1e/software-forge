@@ -122,7 +122,32 @@ Work through BRs in dependency order (foundational validation first, integration
 
 **Output**: Test code and working implementation in the packages defined by the solution draft.
 
-**Gate**: All tests pass (green). Every test traces back to a test specification. Implementation matches the solution draft interfaces and the verification steps in the use cases. Every commit follows the RED-GREEN-REFACTOR pattern.
+**Gate**: All tests pass (green). Every test traces back to a test specification. Implementation matches the solution draft interfaces and the verification steps in the use cases. Every commit follows the RED-GREEN-REFACTOR pattern. Before each dispatch, the Orchestrator has run the Pre-Flight Architectural-Pivot Checkpoint (see below) and resolved any signals that fired.
+
+#### Stage 7 Pre-Flight Architectural-Pivot Checkpoint
+
+Before any Stage 7 Developer dispatch ships, the Orchestrator MUST evaluate all five questions and confirm that each answer is either "No" or "Yes — already covered upstream by [specific BR / Solution / ADR citation]". If any answer is "Yes" without upstream coverage, the Orchestrator MUST halt the Stage 7 dispatch and dispatch the missing upstream stage(s) first.
+
+1. **New K8s (or platform) resource kind**: does this dispatch's acceptance criteria CREATE a kind of resource that did not exist in the project's deployment surface before — Secret, ConfigMap, Role, ClusterRole, NetworkPolicy, Job, CronJob, ServiceAccount, CRD, Webhook, mutating/validating admission policy, custom resource? If yes → architectural; require Stage 4 BR + Stage 6 Solution + ADR before Stage 7.
+
+2. **Storage / state substrate change**: does this dispatch CHANGE the substrate of an existing data flow — hostPath ↔ PVC, hostPath ↔ Secret/ConfigMap, in-memory ↔ persistent, single-process ↔ multi-process, single-cluster ↔ external managed service, sync ↔ async/queued? Substrate changes alter trust boundary, multi-node story, durability story, and management UX. If yes → architectural; require ADR + BR + Solution.
+
+3. **New contract surface**: does this dispatch INTRODUCE a new HTTP route, gRPC method, NATS / Kafka / RabbitMQ subject, event topic, webhook callback, or any other inter-process contract surface? If yes → require Contract Registry entry (Solution Architect dispatch) before Stage 7.
+
+4. **New RBAC binding or cross-namespace access**: does this dispatch ADD a new ServiceAccount, Role/ClusterRole, RoleBinding/ClusterRoleBinding, cross-namespace Service reference, or otherwise expand the principal-to-resource access matrix? If yes → require Stage 6 Cross-Component Service References update (Protocol 003, Rule 7) + Solution Architect dispatch.
+
+5. **Authorization-citation mismatch**: does this dispatch CITE an ADR, BR, Solution doc, or prior dispatch as authorization for its design? If yes, the Orchestrator MUST read the cited section verbatim and confirm the dispatch design matches. Citation-mismatch (the cited document explicitly says X, the dispatch ships not-X or beyond-X) is a stop-and-question signal regardless of how clean the rest of the dispatch looks. Do not dispatch until the contradiction is resolved by either an upstream amendment (with proper stage gate) or a redesign of the dispatch to match the cited authorization.
+
+The Stage 7 gate CANNOT mark PASS if any of these signals fired during dispatch authoring and was not resolved upstream first. The Orchestrator records the checkpoint evaluation (per dispatch) in the audit-log gate verdict, even when all answers are "No" — the negative confirmation is itself the evidence that the check was run.
+
+**Scope clarifications**:
+
+- This rule does NOT slow down genuine tactical fixes. A 1-line value-default change, a typo correction, a comment update, a test added for an existing scenario — none of these trigger any of the 5 questions. The checkpoint is a 60-second pass for clean dispatches; only architectural drift triggers the full Stage 1-6 redirect.
+- This rule does NOT require pre-dispatch consensus on every chart tweak or code change. Solo Developers can self-evaluate the 5 questions and proceed for clean cases; the Orchestrator only formally invokes the gate when authoring multi-agent dispatches.
+- This rule does NOT retroactively undo merged work. When detection happens after Stage 7 merge, remediation = retroactive Stage 1-6 formalization, NOT code rollback. The "working software is good" guidance stays.
+- Each "Yes" answer that requires upstream coverage SHOULD cite the specific upstream artifact (BR-N, Solution §N, ADR #N) that authorizes the design. "Yes — covered by Solution §3.2 + BR-145" is acceptable; "Yes — Solution covers it" is not specific enough and shifts gate burden to readers.
+
+**Why this rule exists**: a Stage 7 dispatch framed as a "tactical fix" can silently introduce architectural surface area — a new Kubernetes resource kind, a substrate change, a new inter-process contract, a new RBAC binding — while citing upstream authorization that does not actually cover the design. The cost of catching this after Stage 7 merge is a multi-dispatch retroactive formalization cascade (Analyst → Specifier → Test Architect → Solution Architect → Developer revalidation) for every undocumented decision that shipped. The cost of catching it at pre-flight is 60 seconds per dispatch. This rule applies the same "make the implicit explicit" principle as Protocol 001's Architectural Decision Records, Protocol 003's Cross-Component Service References, and Protocol 002's Runtime Behavior Coverage Check.
 
 ## Architectural Decision Records
 

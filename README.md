@@ -22,13 +22,13 @@ Protocols define **how** to do each thing:
 
 | # | Protocol | Governs |
 |---|----------|---------|
-| 001 | [Documentation-Driven Development](protocols/001-documentation-driven-development.md) | The full pipeline — stages 1 through 7; Architectural Decision Records (ADRs) |
+| 001 | [Documentation-Driven Development](protocols/001-documentation-driven-development.md) | The full pipeline — stages 1 through 7; Architectural Decision Records (ADRs); Stage 7 Pre-Flight Architectural-Pivot Checkpoint |
 | 002 | [Test-Driven Business Rules](protocols/002-test-driven-business-rules.md) | Stage 5 — writing test cases from BRs; runtime behavior coverage check (E2E scenarios) |
 | 003 | [Solution Architecture](protocols/003-solution-architecture.md) | Stage 6 — designing the technical solution; cross-component service references |
 | 004 | [Red-Green-Refactor](protocols/004-red-green-refactor.md) | Stage 7 — implementing with strict TDD |
 | 005 | [Cross-Project Integration](protocols/005-cross-project-integration.md) | Multi-project boundaries — contracts between systems |
 | 006 | [Phased Multi-Component Delivery](protocols/006-phased-multi-component-delivery.md) | Multi-component systems — master SOW, build order, vertical slices |
-| 007 | [Multi-Agent Pipeline Execution](protocols/007-multi-agent-pipeline-execution.md) | Multi-agent decomposition — agent roles, orchestration, context handoff, workspace isolation, developer agent prohibitions, orchestrator prohibitions, agent behavior on undocumented architecture |
+| 007 | [Multi-Agent Pipeline Execution](protocols/007-multi-agent-pipeline-execution.md) | Multi-agent decomposition — agent roles, orchestration, context handoff, workspace isolation, developer agent prohibitions, orchestrator prohibitions, agent behavior on undocumented architecture, Stage 7 pre-flight sequencing rule |
 | 008 | [Agent Communication Contract](protocols/008-agent-communication-contract.md) | Dispatch, completion, and gate feedback artifacts between Orchestrator and agents |
 
 ## Prompts
@@ -58,6 +58,7 @@ Prompts are **executable instructions** — give them to an AI assistant or foll
 | 019 | [Architectural Documentation](prompts/019-architectural-documentation.md) | ADR requirement (Protocol 001) and agent behavior on undocumented architecture (Protocol 007) |
 | 020 | [Stage 6 Gate — Cross-Component Service References](prompts/020-stage6-gate-cross-component-services.md) | Protocol 003 — mandatory enumeration of external services consumed across release/namespace boundaries |
 | 021 | [Stage 5 Gate — Runtime E2E Tests](prompts/021-stage5-gate-runtime-e2e-tests.md) | Protocol 002 — runtime behavior coverage check (E2E scenarios required for runtime BRs) |
+| 022 | [Stage 7 Pre-Flight — Architectural-Pivot Checkpoint](prompts/022-stage7-architectural-pivot-checkpoint.md) | Protocol 001 Stage 7 + Protocol 007 Rule 11 — 5-question pre-flight gate that blocks tactical dispatches expanding architectural surface area |
 
 ## Templates
 
